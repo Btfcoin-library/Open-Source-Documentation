@@ -1,75 +1,196 @@
-<header>
+import hashlib
+import json
+from typing
+import List
 
-<!--
-  <<< Author notes: Course header >>>
-  Include a 1280×640 image, course title in sentence case, and a concise description in emphasis.
-  In your repository settings: enable template repository, add your 1280×640 social image, auto delete head branches.
-  Add your open source license, GitHub uses MIT license.
--->
+class Block:
+        def __init__(self, index, previous_hash, transactions: List[dict], timestamp, difficulty):
+        self.index = index
+self.previous_hash = previous_hash
+self.transactions = transactions
+self.timestamp = timestamp
+self.difficulty = difficulty
+self.nonce = 0 #Block generation
+def calculate_merkle_root(self): #Build the Merkle tree to generate the root Hash, here is a simplified diagram
+hashes = [tx['hash']
+        for tx in self.transactions
+]
+while len(hashes) > 1:
+        new_hashes = []
+for i in range(0, len(hashes), 2):
+        combined = hashes[i] + hashes[i + 1]
+if i + 1 < len(hashes)
+else hashes[i]
+hash_object = hashlib.sha256(combined.encode())
+new_hashes.append(hash_object.hexdigest())
+hashes = new_hashes
+return hashes[0]
+if hashes
+else None
 
-# Introduction to GitHub
+def hash_block(self):
+        block_header = {
+                'index': self.index,
+                'previous_hash': self.previous_hash,
+                'merkle_root': self.calculate_merkle_root(),
+                'timestamp': self.timestamp,
+                'difficulty': self.difficulty,
+                'nonce': self.nonce
+        }
+block_header_json = json.dumps(block_header, sort_keys = True).encode()
+return hashlib.sha256(block_header_json).hexdigest()
 
-_Get started using GitHub in less than an hour._
+def mine_block(self): #Simple calculation optimization
+target = '0' * self.difficulty
+while True:
+        hash_value = self.hash_block()
+if hash_value.startswith(target):
+        return hash_value
+self.nonce += 1
 
-</header>
 
-<!--
-  <<< Author notes: Step 1 >>>
-  Choose 3-5 steps for your course.
-  The first step is always the hardest, so pick something easy!
-  Link to docs.github.com for further explanations.
-  Encourage users to open new tabs for steps!
--->
+# Transaction data structure (simplified version)
+transaction_1 = {
+        'sender': 'Alice',
+        'receiver': 'Bob',
+        'amount': 10,
+        'timestamp': 1630000000,
+        'hash': None# Hash is not generated initially
+}
+transaction_2 = {
+        'sender': 'Charlie',
+        'receiver': 'David',
+        'amount': 5,
+        'timestamp': 1630000010,
+        'hash': None
+}
 
-## Step 1: Create a branch
+#Function to generate transaction Hash (simplified Hash generation)
+def generate_transaction_hash(transaction):
+        transaction_json = json.dumps(transaction, sort_keys = True).encode()
+hash_object = hashlib.sha256(transaction_json)
+transaction['hash'] = hash_object.hexdigest()
+return transaction['hash']
 
-_Welcome to "Introduction to GitHub"! :wave:_
+# Transaction Generate Hash
+generate_transaction_hash(transaction_1)
+generate_transaction_hash(transaction_2)
 
-**What is GitHub?**: GitHub is a collaboration platform that uses _[Git](https://docs.github.com/get-started/quickstart/github-glossary#git)_ for versioning. GitHub is a popular place to share and contribute to [open-source](https://docs.github.com/get-started/quickstart/github-glossary#open-source) software.
-<br>:tv: [Video: What is GitHub?](https://www.youtube.com/watch?v=pBy1zgt0XPc)
+# Create a block containing sample transactions
+new_block = Block(
+        index = 1,
+        previous_hash = '00000000000000000000000000000000', #The previous block of the genesis block Hash 0 transactions = [transaction_1, transaction_2],
+        timestamp = 1630000020,
+        difficulty = 4
+)
 
-**What is a repository?**: A _[repository](https://docs.github.com/get-started/quickstart/github-glossary#repository)_ is a project containing files and folders. A repository tracks versions of files and folders. For more information, see "[About repositories](https://docs.github.com/en/repositories/creating-and-managing-repositories/about-repositories)" from GitHub Docs.
+# Calculate and print block Hash
+block_hash = new_block.hash_block()
+print("124598 Hash:", block_hash)
 
-**What is a branch?**: A _[branch](https://docs.github.com/en/get-started/quickstart/github-glossary#branch)_ is a parallel version of your repository. By default, your repository has one branch named `main` and it is considered to be the definitive branch. Creating additional branches allows you to copy the `main` branch of your repository and safely make any changes without disrupting the main project. Many people use branches to work on specific features without affecting any other parts of the project.
+import requests
+import json
 
-Branches allow you to separate your work from the `main` branch. In other words, everyone's work is safe while you contribute. For more information, see "[About branches](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/about-branches)".
+# Encrypted service interface address
+SERVER_ENCRYPT_URL = "https://rpc.btfcoin.com/encrypt"
 
-**What is a profile README?**: A _[profile README](https://docs.github.com/account-and-profile/setting-up-and-managing-your-github-profile/customizing-your-profile/managing-your-profile-readme)_ is essentially an "About me" section on your GitHub profile where you can share information about yourself with the community on GitHub.com. GitHub shows your profile README at the top of your profile page. For more information, see "[Managing your profile README](https://docs.github.com/en/account-and-profile/setting-up-and-managing-your-github-profile/customizing-your-profile/managing-your-profile-readme)".
+def request_quantum_encrypt(transaction_data):
+        payload = {
+                'data': transaction_data
+        }
+response = requests.post(SERVER_ENCRYPT_URL, json = payload)
+if response.status_code == 200:
+        result = response.json()
+return result['hash']
+else :
+        raise Exception("Encryption request failed")
 
-![profile-readme-example](/images/profile-readme-example.png)
+# Transaction data
+example_transaction_data = {
+        'sender': 'Eve',
+        'receiver': 'Frank',
+        'amount': 8,
+        'timestamp': 1630000030
+}
+example_transaction_json = json.dumps(example_transaction_data, sort_keys = True)
 
-### :keyboard: Activity: Your first branch
+# Quantum encryption service generates transaction Hash
+try:
+encrypted_hash = request_quantum_encrypt(example_transaction_json)
+print("Transactions after quantum encryption Hash:", encrypted_hash)
+except Exception as e:
+        print(f "Encryption failed: {e}")
 
-1. Open a new browser tab and navigate to your newly made repository. Then, work on the steps in your second tab while you read the instructions in this tab.
-2. Navigate to the **< > Code** tab in the header menu of your repository.
+import socket
+import threading
+from blockchain.transaction
+import Transaction
 
-   ![code-tab](/images/code-tab.png)
+class Node:
+        def __init__(self):
+        self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+self.host = '0.0.0.0'#Listen on all available network interfaces
+self.port = 5000# Custom port number, configurable
+self.transaction_pool = []
+self.connected_nodes = []
+self.blockchain = []# Locally store a copy of the blockchain
 
-3. Click on the **main** branch drop-down.
+def start(self):
+        try:
+        self.socket.bind((self.host, self.port))
+self.socket.listen(5)#Allow a maximum of 5 connections to queue
+print(f "The node has been started and is listening {self.host}:{self.port}")# Start the listening thread
+listener_thread = threading.Thread(target = self.listen_for_connections)
+listener_thread.start()# Start transaction processing thread
+transaction_thread = threading.Thread(target = self.process_transactions)
+transaction_thread.start()
+except Exception as e:
+        print(f "Node startup failed: {e}")
 
-   ![main-branch-dropdown](/images/main-branch-dropdown.png)
+def listen_for_connections(self):
+        while True:
+        client_socket, client_address = self.socket.accept()# Receiving Node Connection
+self.connected_nodes.append(client_socket)
+print(f "New Node Connection: {client_address}")
 
-4. In the field, name your branch `my-first-branch`. In this case, the name must be `my-first-branch` to trigger the course workflow.
-5. Click **Create branch: my-first-branch** to create your branch.
+def process_transactions(self):
+        while True:
+        if len(self.transaction_pool) > 0: #Take out the transaction for processing
+transaction = self.transaction_pool.pop(0)# Request quantum encryption from the master server (call the function in quantum_encrypt.py above)
+try:
+encrypted_hash = request_quantum_encrypt(json.dumps(transaction.__dict__))
+transaction.hash = encrypted_hash# After the transaction is encrypted successfully, it is added to the block
+if len(self.blockchain) == 0: #Genesis Block Processing
+genesis_block = self.create_genesis_block([transaction])
+self.blockchain.append(genesis_block)
+else :
+        last_block = self.blockchain[-1]
+new_block = self.create_block([transaction], last_block)
+self.blockchain.append(new_block)# Broadcast blocks to other nodes
+self.broadcast_block(new_block)
+except Exception as e:
+        print(f "Transaction processing failed: {e}")
 
-   ![create-branch-button](/images/create-branch-button.png)
+def create_genesis_block(self, transactions): #Creating the Genesis Block
+return Block(
+        index = 0,
+        previous_hash = '0' * 64, #The hash before the genesis block is the whole 0 transactions = transactions,
+        timestamp = 1630000040,
+        difficulty = 4
+)
 
-   The branch will automatically switch to the one you have just created.
-   The **main** branch drop-down bar will reflect your new branch and display the new branch name.
+def create_block(self, transactions, previous_block): #Create a normal block
+new_index = previous_block.index + 1
+new_timestamp = 1630000050# Timestamp
+new_difficulty = previous_block.difficulty# Simplified difficulty adjustment logic
+return Block(
+        index = new_index,
+        previous_hash = previous_block.hash_block(),
+        transactions = transactions,
+        timestamp = new_timestamp,
+        difficulty = new_difficulty
+)
 
-6. Wait about 20 seconds then refresh this page (the one you're following instructions from). [GitHub Actions](https://docs.github.com/en/actions) will automatically update to the next step.
-
-<footer>
-
-<!--
-  <<< Author notes: Footer >>>
-  Add a link to get support, GitHub status page, code of conduct, license link.
--->
-
----
-
-Get help: [Post in our discussion board](https://github.com/orgs/skills/discussions/categories/introduction-to-github) &bull; [Review the GitHub status page](https://www.githubstatus.com/)
-
-&copy; 2024 GitHub &bull; [Code of Conduct](https://www.contributor-covenant.org/version/2/1/code_of_conduct/code_of_conduct.md) &bull; [MIT License](https://gh.io/mit)
-
-</footer>
+def broadcast_block(self, block): #The logic of broadcasting blocks to connected nodes, network sending code
+for node in self.connected_nodes:
+        print(f "To Node {node.getpeername()} Broadcast Block")
